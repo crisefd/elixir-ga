@@ -1,0 +1,2 @@
+%{"sfmt": {:git, "https://github.com/jj1bdx/sfmt-erlang.git", "c0105614bc224cbfed07236e7f4e56f69504d48a", []},
+  "sfmt_erlang": {:git, "https://github.com/jj1bdx/sfmt-erlang.git", "c0105614bc224cbfed07236e7f4e56f69504d48a", []}}
