@@ -12,7 +12,7 @@ defmodule BasicGA do
     [chromo_x, chromo_y]
   end
   
-  def discrete_mutation(chromo, lower_bounds, upper_bounds) do
+  def discrete_mutation(chromo, upper_bounds, lower_bounds) do
     index = Randomise.sample_index(chromo[:genes])
     u = :array.get(upper_bounds, index)
     l = :array.get(lower_bounds, index)
