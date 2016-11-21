@@ -27,6 +27,7 @@ defmodule ElixirGa.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:sfmt, git: "https://github.com/jj1bdx/sfmt-erlang.git"}]
+    [{:sfmt, git: "https://github.com/jj1bdx/sfmt-erlang.git"},
+     {:mock, "~> 0.2.0", only: :test}]
   end
 end
