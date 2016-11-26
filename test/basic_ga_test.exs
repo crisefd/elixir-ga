@@ -42,4 +42,24 @@ defmodule BasicGaTest do
     assert called Randomise.random_range(1, 5, true)
     assert called Randomise.integer_random_range(0, 3, false)
   end
+  
+  test_with_mock  "uniform crossover of two chromosomes",
+                  Randomise,
+                  [],
+                  [ integer_random_range: fn(0, 1, true) -> 1 end,
+                    integer_random_range: fn(0, 1, true) -> 0 end,
+                    integer_random_range: fn(0, 1, true) -> 1 end ] do
+
+    chromo_x = %{ genes: %{ 0 => 1, 1 => 2, 2 => 3}, fitness: nil,
+                  norm_fitness: nil, probability: nil, snr: nil,
+                  fitness_sum: nil, size: 3 }
+    chromo_y = %{ genes: %{ 0 => 4, 1 => 5, 2 => 6}, fitness: nil,
+                  norm_fitness: nil, probability: nil, snr: nil, 
+                  fitness_sum: nil, size: 3 }
+    { new_chromo_x , new_chromo_y } = BasicGA.uniform_crossover chromo_x, chromo_y
+    assert new_chromo_x.genes == %{ 0 => 1, 1 => 2, 2 => 3 }
+    assert new_chromo_y.genes == %{ 0 => 1, 1 => 2, 2 => 3 }
+    
+  end
+  
 end
