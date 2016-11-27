@@ -16,7 +16,7 @@ defmodule Randomise do
         Reseeds the SFMT when the module is loaded
        """
   def reseed_generator do 
-    :sfmt.seed(:os.timestamp())
+    :sfmt.seed :os.timestamp
     :ok
   end 
 
@@ -24,7 +24,8 @@ defmodule Randomise do
         Generates integer random numbers
        """
   def integer_random(number) do
-    round :sfmt.uniform(number)
+    reseed_generator
+    round :sfmt.uniform number
   end
 
   @doc """
@@ -34,9 +35,10 @@ defmodule Randomise do
     if number_a >= number_b do
       raise "#random_range #{number_a} can't be minor or equal than #{number_b}"
     end
+    reseed_generator
     r = case inclusive do
-          :true -> number_a + :sfmt.uniform() * (number_b + 1)
-          :false -> number_a + :sfmt.uniform() * number_b
+          :true -> number_a + :sfmt.uniform * (number_b + 1)
+          :false -> number_a + :sfmt.uniform * number_b
         end
     r
   end
@@ -48,9 +50,10 @@ defmodule Randomise do
     if number_a >= number_b do
       raise "#random_range #{number_a} can't be minor or equal than #{number_b}"
     end
+    reseed_generator
     r = case inclusive do
-          :true -> round(number_a + Float.floor(:sfmt.uniform() * (number_b + 1))) 
-          :false -> round(number_a + Float.floor(:sfmt.uniform() * number_b ))
+          :true -> round(number_a + Float.floor(:sfmt.uniform * (number_b + 1))) 
+          :false -> round(number_a + Float.floor(:sfmt.uniform * number_b ))
         end
     r
   end
