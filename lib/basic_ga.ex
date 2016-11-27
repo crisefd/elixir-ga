@@ -1,16 +1,25 @@
 defmodule BasicGA do
   require Chromosome
-  require Problem
+  require InputData
 
   @moduledoc "Basic Genetic Algorithm"
 
-  @spec evaluate(Chromosome.t, Problem.t) :: Chromosome.t
+  @spec evaluate(Chromosome.t, InputData.t) :: Chromosome.t
 
   @spec uniform_crossover(Chromosome.t, Chromosome.t) :: List
 
-  @spec discrete_mutation(Chromosome.t, Map, Map) :: Chromosome.t
+  @spec discrete_mutation(Chromosome.t, Input) :: Chromosome.t
+
+  @spec tournament_selection(Map, Integer, List, InputData.t) :: List
   
-  @spec tournament_selection(Map, Integer, Integer, List, Problem.t) :: List
+  @spec crossover(InputData) :: Any
+  
+  def crossover(input_data) do
+    # num_selected_individuals = 
+    # case cross_rate do
+    #   :uniform -> 
+    # end
+  end
 
   @doc """
         Computes the uniform crossover for two given chromosomes
@@ -23,15 +32,6 @@ defmodule BasicGA do
                            chromo_x.size - 1 )
     { %{ chromo_x | genes: elem(r, 0) }, 
       %{ chromo_y | genes: elem(r, 1) } }
-  end
-
-  def generate_probabilities_for_crossover(n, ls) do
-    if n == 0 do
-      ls
-    else
-      p = Randomise.integer_random_range 0, 1
-      generate_probabilities_for_crossover(n - 1, [p | ls])
-    end
   end
 
   def uniform_crossover(x, y, x_, y_, i) when i >= 0 do
@@ -55,11 +55,11 @@ defmodule BasicGA do
   @doc """
         Computes the discrete mutation for the genes in a given chromosome
       """
-  def discrete_mutation(chromo, upper_bounds, lower_bounds) do
+  def discrete_mutation(chromo, input_data) do
     size = chromo.size
     index = Randomise.integer_random_range(0, size, false)
-    u = upper_bounds[index]
-    l = lower_bounds[index]
+    u = input_data.upper_bounds[index]
+    l = input_data.lower_bounds[index]
     new_value = Randomise.random_range(l, u, true)
     new_genes = %{ chromo.genes | index => new_value }
     new_chromo = %{ chromo | genes: new_genes }
@@ -69,43 +69,51 @@ defmodule BasicGA do
   @doc """
         Fitness evaluation function
        """
-  def evaluate(chromo, problem) do
+  def evaluate(chromo, input_data) do
     %{  genes: chromo.genes,
-        fitness: problem.fitness_function.(chromo.genes, chromo.size),
+        fitness: input_data.fit_function.(chromo.genes, chromo.size),
         norm_fitness: chromo.norm_fitness,
         probability: chromo.probability,
         snr: chromo.snr,
         fitness_sum: chromo.fitness_sum }
   end
 
-  def tournament_selection(population, pop_size, k,
-                           selected_inviduals, problem) when k > 0 do
-    chromo_1 = population[Randomise.integer_random_range(0, pop_size, false)]
-    chromo_2 = population[Randomise.integer_random_range(0, pop_size, false)]
-    case problem.maximization? do
+  @doc """
+        Tournament selection operation
+       """
+  def tournament_selection( population, k, selected_inviduals,
+                            input_data) when k > 0 do
+    pop_size = input_data.pop_size
+    chromo_1 = population[ Randomise.integer_random_range( 0, 
+                                                           input_data.pop_size, 
+                                                           false ) ]
+    chromo_2 = population[ Randomise.integer_random_range( 0, 
+                                                           input_data.pop_size, 
+                                                           false ) ]
+    case input_data.maximization? do
       :true -> if chromo_1.fitness > chromo_2.fitness do 
-                  tournament_selection( population, pop_size, k - 1, 
-                                          [ chromo_1 | selected_inviduals ], 
-                                          problem )
+                  tournament_selection( population, k - 1, 
+                                        [ chromo_1 | selected_inviduals ], 
+                                        input_data )
                else
-                  tournament_selection( population, pop_size, k - 1, 
+                  tournament_selection( population, k - 1, 
                                         [ chromo_2 | selected_inviduals ], 
-                                        problem )
+                                        input_data )
                end
       :false -> if chromo_1.fitness < chromo_2.fitness do 
-                  tournament_selection( population, pop_size, k - 1, 
-                                          [ chromo_1 | selected_inviduals ], 
-                                          problem )
+                  tournament_selection( population, k - 1, 
+                                        [ chromo_1 | selected_inviduals ], 
+                                        input_data )
                else
-                  tournament_selection( population, pop_size, k - 1,
+                  tournament_selection( population,  k - 1,
                                         [ chromo_2 | selected_inviduals ],
-                                        problem )
+                                        input_data )
                end
     end
   end
 
-  def tournament_selection(population, pop_size, k, selected_inviduals, problem)
-    when k == 0 do 
+  def tournament_selection( population, k, selected_inviduals, 
+                            input_data ) when k == 0 do 
     selected_inviduals 
   end
 
