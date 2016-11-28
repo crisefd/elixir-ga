@@ -8,17 +8,29 @@ defmodule BasicGA do
 
   @spec uniform_crossover(Chromosome.t, Chromosome.t) :: List
 
-  @spec discrete_mutation(Chromosome.t, Input) :: Chromosome.t
+  @spec discrete_mutation(Chromosome.t, InputData.t) :: Chromosome.t
 
   @spec tournament_selection(Map, Integer, List, InputData.t) :: List
   
-  @spec crossover(InputData) :: Any
+  @spec crossover(List, List, InputData.t) :: List
   
-  def crossover(input_data) do
-    # num_selected_individuals = 
-    # case cross_rate do
-    #   :uniform -> 
-    # end
+  @doc """ 
+        Crossover operation method
+      """
+  def crossover( selected_inviduals, crossed_individuals, input_data ) do
+    case input_data.cross_type do
+      :uniform -> chromo_1 = hd selected_inviduals
+                  chromo_2 = hd tl(selected_inviduals)
+                  uniform_crossover chromo_1, chromo_2
+                  crossover( tl(tl (selected_inviduals)), 
+                             [ chromo_1 | [ chromo_2 | crossed_individuals ] ],
+                             input_data )
+      :one_cut_point -> raise "Not implemented yet"
+    end
+  end
+  
+  def crossover( [], crossed_individuals, input_data) do
+    crossed_individuals
   end
 
   @doc """
