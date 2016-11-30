@@ -14,6 +14,10 @@ defmodule BasicGA do
   
   @spec crossover(List, List, InputData.t) :: List
   
+  def crossover( [], crossed_individuals, input_data) do
+    crossed_individuals
+  end
+  
   @doc """ 
         Crossover operation method
       """
@@ -21,17 +25,15 @@ defmodule BasicGA do
     case input_data.cross_type do
       :uniform -> chromo_1 = hd selected_inviduals
                   chromo_2 = hd tl(selected_inviduals)
-                  uniform_crossover chromo_1, chromo_2
+                  { new_chromo_1, new_chromo_2 } = uniform_crossover chromo_1, chromo_2
                   crossover( tl(tl (selected_inviduals)), 
-                             [ chromo_1 | [ chromo_2 | crossed_individuals ] ],
+                             [ new_chromo_1 | [ new_chromo_2 | crossed_individuals ] ],
                              input_data )
       :one_cut_point -> raise "Not implemented yet"
     end
   end
   
-  def crossover( [], crossed_individuals, input_data) do
-    crossed_individuals
-  end
+  
 
   @doc """
         Computes the uniform crossover for two given chromosomes

@@ -80,6 +80,25 @@ defmodule BasicGaTest do
     assert new_chromo_y != chromo_y
   end
   
+  test "crossover operation of type uniform with selected individuals" do
+    selected_inviduals = [
+                          %{ genes: %{ 0 => 1, 1 => 2, 2 => 3, 3 => 4, 4 => 5, 5 => 6 },
+                             fitness: nil, norm_fitness: nil, probability: nil, snr: nil,
+                             fitness_sum: nil, size: 6 },
+                          %{ genes: %{ 0 => -4, 1 => -5, 2 => -6, 3 => -7, 4 => -8, 5 => -9 },
+                             fitness: nil, norm_fitness: nil, probability: nil, snr: nil, 
+                             fitness_sum: nil, size: 6 }
+                          ]
+    input_data = %{ fit_function: nil, maximization?: true, pop_size: nil,
+                    cross_rate: nil, mut_rate: nil, cross_type: :uniform, 
+                    mut_type: nil, num_genes: 6, lower_bounds: nil, 
+                    upper_bounds: nil, maximization?: nil }
+
+    result = BasicGA.crossover selected_inviduals, [], input_data
+    assert hd(selected_inviduals).genes != hd(result).genes
+    assert hd(tl(selected_inviduals)).genes != hd(tl(result)).genes
+  end
+  
   test "tournament selection with k = 2" do
     population = %{ 0 => %{ genes: %{}, fitness: 5, norm_fitness: nil,
                             probability: nil, fitness_sum: nil, snr: nil,
