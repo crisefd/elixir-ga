@@ -4,8 +4,8 @@ defmodule Chromosome do
       Contains the data type definition of the Chromosome
     """
 
-  defstruct [:genes, :fitness, :norm_fitness, :probability, :snr, :fitness_sum,
-             :size]
+  defstruct [ :genes, :fitness, :norm_fitness, :probability, :snr, :fitness_sum,
+             :size ]
   
   @typedoc """
     Data structure to code solutions

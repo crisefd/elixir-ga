@@ -2,27 +2,17 @@ defmodule BasicGaTest do
   use ExUnit.Case, async: false
   doctest BasicGA
 
+  require TestFunctions
   import Mock
-  
+
   test "fitness evaluation of chromosome" do
     chromo = %{ genes: %{ 0 => 1, 1 => 2, 2 => 3}, fitness: nil,
-                norm_fitness: nil, probability: nil, snr: nil, fitness_sum: nil, 
-                size: 3 }
-    fitness_function = fn(x, n) ->
-      defmodule TestFuncion do
-        def fit_func_aux(genes, index, lim, acc) when index == lim do
-          acc + genes[index]
-        end
-        def fit_func_aux(genes, index, lim, acc) when index < lim do
-          fit_func_aux genes, index + 1, lim, acc + genes[index]
-        end
-      end
-      res = TestFuncion.fit_func_aux x, 0, n - 1, 0
-      res
-    end
-    input_data = %{ fit_function: fitness_function, maximization?: nil, pop_size: nil,
-                    cross_rate: nil, mut_rate: nil, cross_type: nil, 
-                    mut_type: nil, num_genes: nil, lower_bounds: nil, 
+                norm_fitness: nil, probability: nil, snr: nil, fitness_sum: nil }
+
+    input_data = %{ fit_function: &TestFunctions.test_fit_function/2,
+                    maximization?: nil, pop_size: nil,
+                    cross_rate: nil, mut_rate: nil, cross_type: nil,
+                    mut_type: nil, num_genes: 3, lower_bounds: nil,
                     upper_bounds: nil, maximization?: true }
     assert BasicGA.evaluate( chromo, input_data ).fitness == 6
   end
@@ -132,6 +122,20 @@ defmodule BasicGaTest do
                     upper_bounds: nil, maximization?: false }
     result_2 = BasicGA.tournament_selection population, k, [], input_data_2
     assert Enum.count(result_2) == 2
+  end
+
+  test "chromosome initialization" do
+    input_data = %{ fit_function: &TestFunctions.test_fit_function/2, maximization?: true,
+                    cross_rate: nil, mut_rate: nil, cross_type: nil, 
+                    mut_type: nil, num_genes: 3, pop_size: 6,
+                    lower_bounds: %{ 0 => 1, 1 => 1, 2 => 1}, 
+                    upper_bounds: %{ 0 => 5, 1 => 5, 2 => 5 },
+                    maximization?: false, fit_function: nil }
+    chromosome = %{ genes: %{}, fitness: nil, norm_fitness: nil,
+                    probability: nil, fitness_sum: nil, snr: nil,
+                    size: nil }                      
+    result = BasicGA.initialize_chromosome(input_data)
+    IO.inspect result
   end
 
 end

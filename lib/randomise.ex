@@ -24,8 +24,13 @@ defmodule Randomise do
         Generates integer random numbers
        """
   def integer_random(number) do
-    reseed_generator
+    reseed_generator()
     round :sfmt.uniform number
+  end
+
+  def random() do
+    reseed_generator()
+    :sfmt.uniform()
   end
 
   @doc """
@@ -35,7 +40,7 @@ defmodule Randomise do
     if number_a >= number_b do
       raise "#random_range #{number_a} can't be minor or equal than #{number_b}"
     end
-    reseed_generator
+    reseed_generator()
     r = case inclusive do
           :true -> number_a + :sfmt.uniform * (number_b + 1)
           :false -> number_a + :sfmt.uniform * number_b
@@ -50,7 +55,7 @@ defmodule Randomise do
     if number_a >= number_b do
       raise "#random_range #{number_a} can't be minor or equal than #{number_b}"
     end
-    reseed_generator
+    reseed_generator()
     r = case inclusive do
           :true -> round(number_a + Float.floor(:sfmt.uniform * (number_b + 1))) 
           :false -> round(number_a + Float.floor(:sfmt.uniform * number_b ))

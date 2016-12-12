@@ -84,12 +84,8 @@ defmodule BasicGA do
         Fitness evaluation function
        """
   def evaluate(chromo, input_data) do
-    %{  genes: chromo.genes,
-        fitness: input_data.fit_function.(chromo.genes, chromo.size),
-        norm_fitness: chromo.norm_fitness,
-        probability: chromo.probability,
-        snr: chromo.snr,
-        fitness_sum: chromo.fitness_sum }
+    %{ chromo | genes: input_data.fit_function.(chromo.genes, 
+                                                input_data.num_genes)}
   end
 
   @doc """
@@ -126,9 +122,38 @@ defmodule BasicGA do
     end
   end
 
-  def tournament_selection( population, k, selected_inviduals, 
+  def tournament_selection(population, k, selected_inviduals, 
                             input_data ) when k == 0 do 
     selected_inviduals 
+  end
+
+  def initialize_chromosome(input_data) do
+   genes = initialize_chromosome_aux(input_data.lower_bounds,
+                                     input_data.upper_bounds,
+                                    %{}, input_data.num_genes - 1)
+   chromo = %{  genes: genes,
+                fitness: nil,
+                norm_fitness: nil,
+                probability: nil,
+                snr: nil,
+                fitness_sum: nil }
+    IO.inspect(input_data)
+    evaluate(chromo, input_data)
+  end
+
+  defp initialize_chromosome_aux(lower_bounds, upper_bounds, 
+                                  genes, -1) do
+    genes
+  end
+
+  defp initialize_chromosome_aux(lower_bounds, upper_bounds, 
+                                  genes, i) do
+    l = lower_bounds[i]
+    u = upper_bounds[i]
+    beta = Randomise.random()
+    xi = l + beta * (u - l)
+    initialize_chromosome_aux( lower_bounds, upper_bounds,
+                                Map.put_new(genes, i, xi), i - 1)
   end
 
 end
